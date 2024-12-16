@@ -19,7 +19,7 @@ option(BUILD_UNIT_TESTS           "Build Open3D unit tests"                  OFF
 option(BUILD_BENCHMARKS           "Build the micro benchmarks"               OFF)
 option(BUILD_PYTHON_MODULE        "Build the python module"                  ON )
 option(BUILD_CUDA_MODULE          "Build the CUDA module"                    OFF)
-option(BUILD_CACHED_CUDA_MANAGER  "Build the cached CUDA memory manager"     ON )
+option(BUILD_CACHED_CUDA_MANAGER  "Build the cached CUDA memory manager"     OFF )
 option(BUILD_GUI                  "Builds new GUI"                           ON )
 option(BUILD_JUPYTER_EXTENSION    "Enable Jupyter support for Open3D"        OFF)
 option(WITH_OPENMP                "Use OpenMP multi-threading"               ON )
@@ -43,7 +43,7 @@ option(USE_SYSTEM_PYBIND11        "Use system pre-installed pybind11"        OFF
 option(USE_SYSTEM_QHULL           "Use system pre-installed qhull"           OFF)
 option(USE_SYSTEM_TINYGLTF        "Use system pre-installed tinygltf"        OFF)
 option(USE_SYSTEM_TINYOBJLOADER   "Use system pre-installed tinyobjloader"   OFF)
-option(BUILD_FILAMENT_FROM_SOURCE "Build filament from source"               OFF)
+option(BUILD_FILAMENT_FROM_SOURCE "Build filament from source"               ON )
 option(PREFER_OSX_HOMEBREW        "Prefer Homebrew libs over frameworks"     ON )
 # Sensor options
 option(BUILD_LIBREALSENSE         "Build support for Intel RealSense camera" OFF)
@@ -52,7 +52,7 @@ option(BUILD_AZURE_KINECT         "Build support for Azure Kinect sensor"    OFF
 option(BUILD_TENSORFLOW_OPS       "Build ops for Tensorflow"                 OFF)
 option(BUILD_PYTORCH_OPS          "Build ops for Pytorch"                    OFF)
 option(BUNDLE_OPEN3D_ML           "Includes the Open3D-ML repo in the wheel" OFF)
-option(DEVELOPER_BUILD  "Add -dev+commit_hash to the project version number" ON )
+option(DEVELOPER_BUILD  "Add -dev+commit_hash to the project version number" OFF)
 
 # In ExternalProject_Add, if THIRD_PARTY_DOWNLOAD_DIR is specified, CMake will
 # first try to look for the required files in THIRD_PARTY_DOWNLOAD_DIR, before
@@ -170,10 +170,13 @@ if(UNIX AND NOT APPLE)
     if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "aarch64")
         set(LINUX_AARCH64 TRUE)
     endif()
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "loongarch64")
+	    set(LINUX_LOONG64 TRUE)
+    endif()
 endif()
 
 # Set BLAS/LAPACK library preference.
-if(LINUX_AARCH64)
+if(LINUX_AARCH64 OR LINUX_LOONG64)
     if(NOT USE_BLAS)
         set(USE_BLAS ON)
         message(WARNING "ARM CPU detected, setting USE_BLAS=ON.")
